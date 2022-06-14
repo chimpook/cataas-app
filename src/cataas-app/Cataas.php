@@ -106,7 +106,7 @@ class Cataas
         return $this;
     }
 
-    protected function build_path()
+    protected function build_cataas_path()
     {
         $this->cataas_path .= !empty($this->commands['tag']) ? '/' . $this->commands['tag'] : '';
         $this->cataas_path .= !empty($this->commands['gif']) ? '/gif' : '';
@@ -122,10 +122,11 @@ class Cataas
         $this->cataas_path .= implode('&', $parameters);
     }
 
-    protected function save()
+    public function get(string $file_path = null)
     {
-        $ch = curl_init($this->url . $this->pathinfo);
-        $fp = fopen('/my/folder/flower.gif', 'wb');
+        $url = $this->getUrl();
+        $ch = curl_init($url);
+        $fp = fopen($file_path, 'wb');
         curl_setopt($ch, CURLOPT_FILE, $fp);
         curl_setopt($ch, CURLOPT_HEADER, 0);
         curl_exec($ch);
@@ -133,20 +134,9 @@ class Cataas
         fclose($fp);
     }
 
-    public function get(string $file_path = null)
-    {
-        $this->build_path();
-
-        return [ 
-            'commands' => $this->commands,
-            'parameters' => $this->parameters, 
-            'path' => $this->cataas_path 
-        ];
-    }
-
     public function getUrl()
     {
-        $this->build_path();
+        $this->build_cataas_path();
         return $this->cataas_url . $this->cataas_path;
     }
 }
