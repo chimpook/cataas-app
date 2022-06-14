@@ -125,13 +125,24 @@ class Cataas
     public function get(string $file_path = null)
     {
         $url = $this->getUrl();
-        $ch = curl_init($url);
+        $ch = curl_init();
         $fp = fopen($file_path, 'wb');
+        if ( !$fp ) {
+            throw new Exception('Cat does not fit here.');
+        }  
+        curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_FILE, $fp);
         curl_setopt($ch, CURLOPT_HEADER, 0);
+        curl_setopt($ch, CURLOPT_FAILONERROR, true);
         curl_exec($ch);
+        if (curl_errno($ch)) {
+            $error_msg = curl_error($ch);
+        }
         curl_close($ch);
         fclose($fp);
+        if (isset($error_msg)) {
+            throw new Exception('Cat not found : ' . $error_msg);
+        }
     }
 
     public function getUrl()
