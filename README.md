@@ -1,7 +1,7 @@
 # cataas-app
 An example app which output a random cat image with filter, depending on current day of the week. Sunday - no filter, other days: monday - blur and so on: mono, sepia, negative, paint, pixel.
 
-This application uses the library CataasApiPhp.
+This application uses the library [CataasApiPhp](https://github.com/chimpook/cataas-api-php).
 
 The refreshing of the image is limited with a quantity of 1 per minute, in order to prevent hangings of the cataas.com service.
 
