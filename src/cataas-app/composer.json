@@ -1,6 +1,6 @@
 {
     "require": {
-        "chimpook/cataas-api-php": "^1.0"
+        "chimpook/cataas-api-php": "^1.0.3"
     },
     "autoload": {
         "psr-4": {

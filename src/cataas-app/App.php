@@ -8,7 +8,7 @@ use CataasApiPhp\CataasApiPhp;
  * An example application which gets a cat from cataas.com
  * and applies a filter chosen by a day of the week
  */
-class CataasApp
+class App
 {
     protected CataasApiPhp $cataas;
 
