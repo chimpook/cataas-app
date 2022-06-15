@@ -40,6 +40,16 @@ class App
             return true;
         }
 
+        // There is no need to wait if the next day begins
+        $file_week_day = date("l", filemtime($this->filename));
+        $current_time = microtime(true);
+        $current_week_day = date("l", $current_time);
+        if ($file_week_day !== $current_week_day) {
+            return true;
+        }
+
+        // It is not the time to refresh image if less than $seconds seconds passed 
+        // since the last refreshing session
         $time_passed = microtime(true) - filemtime($this->filename);
         return $time_passed > $seconds;
     }
