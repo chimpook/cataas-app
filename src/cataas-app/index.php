@@ -5,4 +5,3 @@ require_once 'CataasApp.php';
 
 $cataasApp = CataasApp::factory(Cataas::factory());
 $cataasApp->exec();
-

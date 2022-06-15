@@ -8,6 +8,8 @@ class CataasApp
 {
     protected Cataas $cataas;
 
+    protected string $filename = 'images' . DIRECTORY_SEPARATOR . 'examplecat.png';
+
     protected $filterRules = [
         'Sunday' => null,
         'Monday' => 'blur',
@@ -28,17 +30,44 @@ class CataasApp
         return new static($cataas);
     }
 
+    protected function isItTimeToRefresh(int $seconds = 60)
+    {
+        if (!file_exists($this->filename)) {
+            return true;
+        }
+
+        $time_passed = microtime(true) - filemtime($this->filename);
+        return $time_passed > $seconds;
+    }
+
     protected function getFilter(DateTime $date): string
     {
         return $this->filterRules[$date->format("l")];
     }
 
+    protected function getFilePath(): string
+    {
+        return __DIR__ . DIRECTORY_SEPARATOR . $this->filename;
+    }
+
     public function exec(DateTime $date = new DateTime())
     {
         try {
-            echo $this->cataas->filter($this->getFilter($date))->getUrl();
+            // cataas.com service hangs up sometimes while getting too many requests
+            // so it is definitely a good idea to limit frequency of requests to one per minute
+            if ($this->isItTimeToRefresh()) {
+                $this->cataas->filter($this->getFilter($date))->get($this->getFilePath());
+            }
+            $this->output();
         } catch (Exception $e) {
             echo $e;
         }
+    }
+
+    protected function output()
+    {
+        echo <<<HTML
+        <img src="{$this->filename}"/>
+        HTML;
     }
 }
