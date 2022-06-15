@@ -36,6 +36,7 @@ class App
 
     protected function isItTimeToRefresh(int $seconds = 60)
     {
+        return true;
         if (!file_exists($this->filename)) {
             return true;
         }
@@ -54,7 +55,7 @@ class App
         return $time_passed > $seconds;
     }
 
-    protected function getFilter(\DateTime $date): string
+    protected function getFilter(\DateTime $date): ?string
     {
         return $this->filterRules[$date->format("l")];
     }
@@ -70,7 +71,10 @@ class App
             // cataas.com service hangs up sometimes while getting too many requests
             // so it is definitely a good idea to limit frequency of requests to one per minute
             if ($this->isItTimeToRefresh()) {
-                $this->cataas->filter($this->getFilter($date))->get($this->getFilePath());
+                if (!empty($this->getFilter($date))) {
+                    $this->cataas->filter($this->getFilter($date));
+                }
+                $this->cataas->get($this->getFilePath());
             }
             $this->output();
         } catch (Exception $e) {
