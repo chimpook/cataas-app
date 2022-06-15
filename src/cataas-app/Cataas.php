@@ -3,7 +3,8 @@
 class Cataas
 {
     protected string $cataas_url = "https://cataas.com";
-    protected string $cataas_path = "/cat";
+    protected string $cataas_path = "";
+    protected string $mode = 'cat';
     protected array $commands = [];
     protected array $parameters = [];
     protected string $file_path = '';
@@ -25,9 +26,32 @@ class Cataas
         return $this;
     }
 
+    public function api(): Cataas
+    {
+        $this->mode = 'api';
+        return $this;
+    }
+
     public function says(string $text): Cataas
     {
         $this->commands['says'] = $text;
+        return $this;
+    }
+
+    public function cats(): Cataas
+    {
+        $this->commands['cats'] = true;
+        return $this;
+    }
+
+    public function tags(string $tags = null): Cataas
+    {
+        if (!empty($this->commands['cats'])) {
+            $this->parameters['tags'] = $tags;    
+        } else {
+            $this->commands['tags'] = true;
+        }
+        
         return $this;
     }
 
@@ -79,8 +103,23 @@ class Cataas
         return $this;
     }
 
+    public function skip(int $number = 0): Cataas
+    {
+        $this->parameters['skip'] = $number;
+        return $this;
+    }
+
+    public function limit(int $number): Cataas
+    {
+        $this->parameters['limit'] = $number;
+        return $this;
+    }
+
     protected function build_cataas_path()
     {
+        $this->cataas_path = DIRECTORY_SEPARATOR . $this->mode;
+        $this->cataas_path .= !empty($this->commands['tags']) ? '/tags' : '';
+        $this->cataas_path .= !empty($this->commands['cats']) ? '/cats' : '';
         $this->cataas_path .= !empty($this->commands['tag']) ? '/' . $this->commands['tag'] : '';
         $this->cataas_path .= !empty($this->commands['gif']) ? '/gif' : '';
         $this->cataas_path .= !empty($this->commands['says']) ? '/says/' . $this->commands['says'] : '';
@@ -98,7 +137,14 @@ class Cataas
     protected function build_file_path(): string
     {
         $ext = $this->build_file_ext();
-        $file_path = __DIR__ . '/cat.' . $ext;
+        if (!empty($this->commands['tags'])) {
+            $file_name = 'tags';
+        } else if (!empty($this->commands['cats'])) {
+            $file_name = 'cats';
+        } else {
+            $file_name = 'cat';
+        }
+        $file_path = __DIR__ . DIRECTORY_SEPARATOR . $file_name . '.' . $ext;
 
         return $file_path;
     }
@@ -107,7 +153,7 @@ class Cataas
     {
         if (isset($this->commands['gif'])) {
             $file_ext = 'gif';
-        } else if (isset($this->parameters['json'])) {
+        } else if (isset($this->parameters['json']) || $this->mode === 'api') {
             $file_ext = 'json';
         } else if (isset($this->parameters['html'])) {
             $file_ext = 'html';
@@ -124,7 +170,7 @@ class Cataas
         $ch = curl_init();
         $fp = fopen($file_path, 'wb');
         if ( !$fp ) {
-            throw new Exception('Cat does not fit here (Cannot open file for writing).');
+            throw new Exception('Cat does not fit here (Cannot open the file for writing).');
         }
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_FILE, $fp);
@@ -137,7 +183,7 @@ class Cataas
         curl_close($ch);
         fclose($fp);
         if (isset($error_msg)) {
-            throw new Exception('Cat not found (Cannot load the file from cataas service): ' . $error_msg);
+            throw new Exception('Cat not found (Cannot load the file from the cataas service): ' . $error_msg);
         }
     }
 
@@ -146,4 +192,5 @@ class Cataas
         $this->build_cataas_path();
         return $this->cataas_url . $this->cataas_path;
     }
+
 }
