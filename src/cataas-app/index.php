@@ -3,6 +3,6 @@
 require_once 'Cataas.php';
 require_once 'CataasApp.php';
 
-$cataasApp = new CataasApp(new Cataas());
+$cataasApp = CataasApp::factory(Cataas::factory());
 $cataasApp->exec();
 
