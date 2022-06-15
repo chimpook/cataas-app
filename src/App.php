@@ -43,7 +43,7 @@ class App
         // There is no need to wait if the next day begins
         $file_week_day = date("l", filemtime($this->filename));
         $current_time = microtime(true);
-        $current_week_day = date("l", $current_time);
+        $current_week_day = date("l", (int) $current_time);
         if ($file_week_day !== $current_week_day) {
             return true;
         }
