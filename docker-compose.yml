@@ -8,7 +8,7 @@ services:
 
   cataas-app:
     build:
-      context: ./srv/cataas-app
+      context: ./srv
       dockerfile: Dockerfile
       args:
         PHP_VERSION: "${CATAAS_APP_PHP_VERSION}"
