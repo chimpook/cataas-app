@@ -36,7 +36,6 @@ class App
 
     protected function isItTimeToRefresh(int $seconds = 60)
     {
-        return true;
         if (!file_exists($this->filename)) {
             return true;
         }
