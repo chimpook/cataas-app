@@ -1,35 +1,8 @@
 # cataas-app
-Example app for implementing the cataas-api-php library.
+An example app which output a random cat image with filter, depending on current day of the week. Sunday - no filter, other days: monday - blur and so on: mono, sepia, negative, paint, pixel.
 
-// To get the URL of a cat:
-$url = $cataas->getUrl();
+This application uses the library CataasApiPhp.
 
-// To download a cat:
-$cataas->get('randomCat.png');
+The refreshing of the image is limited with a quantity of 1 per minute, in order to prevent hangings of the cataas.com service.
 
-// To get a cat and output it to STDOUT
-$cataas->get();
-
-// Usage variants from cataas.com:
-
-$cataas->tag('cute')->html()->get();
-$cataas->tag('cute')->get();
-$cataas->gif()->get();
-$cataas->says('Hello, human!')->get();
-$cataas->says('Hello, human!')->size(22)->color('green')->get();
-$cataas->type('sq')->get();
-$cataas->filter('negative')->get();
-$cataas->width(360)->get();
-$cataas->height(240)->get();
-$cataas->gif()->says('Hello!')->filter('sepia')->color('orange')->size(40)->type('or')->get();
-
-$cataas->api()->cats()->tags('cute,fail')->skip(0)->limit(10)->get();
-$cataas->api()->tags()->get();
-
-// Examples of console oneliners
-
-// Get a cat and flip it upside down
-php -r 'require "Cataas.php"; echo (new Cataas)->get();' | cat | convert - -flip flipped_cat.png
-
-// Get a cat and frame it with a tomato frame
-php -r 'require "Cataas.php"; echo (new Cataas)->get();' | cat | convert - -bordercolor Tomato -border 10%x10% framed_cat.png
+But when the date is changing it is no need to wait, so image can be refreshed at 23:59:59 and then at 00:00:00.
