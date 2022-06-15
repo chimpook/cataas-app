@@ -11,7 +11,7 @@ use CataasApiPhp\CataasApiPhp;
 class App
 {
     protected CataasApiPhp $cataas;
-
+    protected const REFRESH_INTERVAL = 10;
     protected string $filename = 'images' . DIRECTORY_SEPARATOR . 'examplecat.png';
 
     protected $filterRules = [
@@ -34,7 +34,7 @@ class App
         return new static($cataas);
     }
 
-    protected function isItTimeToRefresh(int $seconds = 60)
+    protected function isItTimeToRefresh(int $seconds = self::REFRESH_INTERVAL)
     {
         if (!file_exists($this->filename)) {
             return true;
