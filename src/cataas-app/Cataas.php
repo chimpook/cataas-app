@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * Cat as a service API wrapper for PHP
+ */
 class Cataas
 {
     protected const CATAAS_URL = "https://cataas.com";
@@ -43,6 +46,11 @@ class Cataas
         return $this;
     }
 
+    /**
+     * What 'tags' is - depends on the way we use it.
+     * With 'cats' - it is a tags filter, like this: /api/cats?tags=cute,eyes
+     * Without 'cats' - it is a command to get the whole list of all possible tags, like this: /api/tags
+     */
     public function tags(string $tags = null): Cataas
     {
         if (!empty($this->commands['cats'])) {
@@ -66,12 +74,23 @@ class Cataas
         return $this;
     }
 
+    /**
+     * The cataas.com provide those types: 
+     * original (or) | square (sq) | medium (md) | small (sm)
+     */
     public function type(string $type): Cataas
     {
         $this->parameters['type'] = $type;
         return $this;
     }
 
+    /**
+     * The cataas.com built-in filters are:
+     * blur | mono | sepia | negative | paint | pixel
+     * May be usage of the locally installed imagemagick would be a better idea.
+     * There is no need to load cataas.com with heavy tasks, 
+     * because it is not so powerful and hangs from time to time
+     */
     public function filter(string $filter): Cataas
     {
         $this->parameters['filter'] = $filter;
@@ -133,18 +152,10 @@ class Cataas
         $this->cataas_path .= implode('&', $parameters);
     }
 
-    protected function build_file_ext(): string
+    public function getUrl()
     {
-        if (isset($this->commands['gif'])) {
-            $file_ext = 'gif';
-        } else if (isset($this->parameters['json']) || $this->mode === 'api') {
-            $file_ext = 'json';
-        } else if (isset($this->parameters['html'])) {
-            $file_ext = 'html';
-        } else {
-            $file_ext = 'png';
-        }
-        return $file_ext;
+        $this->build_cataas_path();
+        return self::CATAAS_URL . $this->cataas_path;
     }
 
     public function get(string $file_path = null)
@@ -175,14 +186,8 @@ class Cataas
         }
 
         if (!empty($error_msg)) {
-            throw new Exception('Cat not found (Cannot load the file from the cataas service): ' . $error_msg);
+            throw new Exception('Cat not found! Cannot load the file from the cataas service : ' . $error_msg);
         }
-    }
-
-    public function getUrl()
-    {
-        $this->build_cataas_path();
-        return self::CATAAS_URL . $this->cataas_path;
     }
 
 }
