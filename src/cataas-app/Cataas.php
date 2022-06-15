@@ -5,15 +5,19 @@
  */
 class Cataas
 {
-    protected const CATAAS_URL = "https://cataas.com";
+    protected const DEFAULT_CATAAS_URL = "https://cataas.com";
+    protected string $cataas_url;
     protected string $cataas_path = "";
     protected string $mode = 'cat';
     protected array $commands = [];
     protected array $parameters = [];
 
-    public function __construct()
+    /**
+     * It is possible to use an alternative service URL
+     */
+    public function __construct(string $cataas_url = self::DEFAULT_CATAAS_URL)
     {
-
+        $this->cataas_url = $cataas_url;
     }
 
     public function tag(string $tag): Cataas
@@ -155,7 +159,7 @@ class Cataas
     public function getUrl()
     {
         $this->build_cataas_path();
-        return self::CATAAS_URL . $this->cataas_path;
+        return $this->cataas_url . $this->cataas_path;
     }
 
     public function get(string $file_path = null)
