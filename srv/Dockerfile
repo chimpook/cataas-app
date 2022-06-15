@@ -20,10 +20,12 @@ RUN pecl install -o -f xdebug && \
 RUN docker-php-ext-enable xdebug
 RUN docker-php-ext-install -j$(nproc) zip gd
 
+RUN curl -sS https://getcomposer.org/installer | php && \
+	mv composer.phar /usr/local/bin/composer
+
 COPY xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
 COPY apache.conf /etc/apache2/sites-enabled/000-default.conf
 
 WORKDIR /var/www
 
 CMD ["apache2-foreground"]
-
