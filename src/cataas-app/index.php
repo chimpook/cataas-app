@@ -1,13 +1,8 @@
 <?php
 
 require_once 'Cataas.php';
+require_once 'CataasApp.php';
 
-$cataas = new Cataas();
-
-try {
-    
-} catch (Exception $e) {
-    echo $e;
-}
-
+$cataasApp = new CataasApp(new Cataas());
+$cataasApp->exec();
 
