@@ -10,7 +10,7 @@ But when the date is changing it is no need to wait, so image can be refreshed a
 ## Installation
     $ git clone https://github.com/chimpook/cataas-app.git
     $ cd cataas-app
-    $ docker-composer up -d
+    $ docker-compose up -d
     
 ## Result
 Result can be viewed here: http://localhost:8881/
