@@ -2,12 +2,11 @@
 
 class Cataas
 {
-    protected string $cataas_url = "https://cataas.com";
+    protected const CATAAS_URL = "https://cataas.com";
     protected string $cataas_path = "";
     protected string $mode = 'cat';
     protected array $commands = [];
     protected array $parameters = [];
-    protected string $file_path = '';
 
     public function __construct()
     {
@@ -134,21 +133,6 @@ class Cataas
         $this->cataas_path .= implode('&', $parameters);
     }
 
-    protected function build_file_path(): string
-    {
-        $ext = $this->build_file_ext();
-        if (!empty($this->commands['tags'])) {
-            $file_name = 'tags';
-        } else if (!empty($this->commands['cats'])) {
-            $file_name = 'cats';
-        } else {
-            $file_name = 'cat';
-        }
-        $file_path = __DIR__ . DIRECTORY_SEPARATOR . $file_name . '.' . $ext;
-
-        return $file_path;
-    }
-
     protected function build_file_ext(): string
     {
         if (isset($this->commands['gif'])) {
@@ -163,26 +147,34 @@ class Cataas
         return $file_ext;
     }
 
-    public function get(string $custom_file_path = null)
+    public function get(string $file_path = null)
     {
-        $file_path = $custom_file_path ?? $this->build_file_path();
         $url = $this->getUrl();
         $ch = curl_init();
-        $fp = fopen($file_path, 'wb');
-        if ( !$fp ) {
-            throw new Exception('Cat does not fit here (Cannot open the file for writing).');
-        }
         curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_FILE, $fp);
         curl_setopt($ch, CURLOPT_HEADER, 0);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
         curl_setopt($ch, CURLOPT_FAILONERROR, true);
-        curl_exec($ch);
-        if (curl_errno($ch)) {
-            $error_msg = curl_error($ch);
+
+        if (empty($file_path)) {
+            curl_setopt($ch, CURLOPT_WRITEFUNCTION, function($ch, $data) {
+                echo $data;
+                return strlen($data);
+            });
+        } else {
+            $fp = fopen($file_path, 'wb');
+            curl_setopt($ch, CURLOPT_FILE, $fp);
         }
+
+        curl_exec($ch);
+        $error_msg = curl_errno($ch) ?? null;
         curl_close($ch);
-        fclose($fp);
-        if (isset($error_msg)) {
+
+        if (!empty($fp)) {
+            fclose($fp);
+        }
+
+        if (!empty($error_msg)) {
             throw new Exception('Cat not found (Cannot load the file from the cataas service): ' . $error_msg);
         }
     }
@@ -190,7 +182,7 @@ class Cataas
     public function getUrl()
     {
         $this->build_cataas_path();
-        return $this->cataas_url . $this->cataas_path;
+        return self::CATAAS_URL . $this->cataas_path;
     }
 
 }
