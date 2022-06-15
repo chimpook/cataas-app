@@ -4,15 +4,8 @@ class Cataas
 {
     protected string $cataas_url = "https://cataas.com";
     protected string $cataas_path = "/cat";
-    protected const MODE_IMAGE = 0;
-    protected const MODE_JSON = 1;
-    protected const MODE_HTML = 2;
-    protected const MODE_URL = 3;
     protected array $commands = [];
     protected array $parameters = [];
-    protected int $mode = self::MODE_JSON;
-    protected string $file_name = 'cat';
-    protected string $file_extension = 'png';
     protected string $file_path = '';
 
     public function __construct()
@@ -74,35 +67,15 @@ class Cataas
         return $this;
     }
 
-    public function image(string $image_path = null): Cataas
-    {
-        $this->mode = self::MODE_IMAGE;
-
-        if (!empty($image_path)) {
-            $ext = pathinfo($image_path, PATHINFO_EXTENSION);
-        }
-
-        $ext = 
-        $this->image_path = $image_path;
-        
-        return $this;
-    }
-
     public function json(): Cataas
     {
-        $this->mode = self::MODE_JSON;
+        $this->parameters['json'] = 'true';
         return $this;
     }
 
     public function html(): Cataas
     {
-        $this->mode = self::MODE_HTML;
-        return $this;
-    }
-
-    public function url(): Cataas
-    {
-        $this->mode = self::MODE_URL;
+        $this->parameters['html'] = 'true';
         return $this;
     }
 
@@ -122,14 +95,37 @@ class Cataas
         $this->cataas_path .= implode('&', $parameters);
     }
 
-    public function get(string $file_path = null)
+    protected function build_file_path(): string
     {
+        $ext = $this->build_file_ext();
+        $file_path = __DIR__ . '/cat.' . $ext;
+
+        return $file_path;
+    }
+
+    protected function build_file_ext(): string
+    {
+        if (isset($this->commands['gif'])) {
+            $file_ext = 'gif';
+        } else if (isset($this->parameters['json'])) {
+            $file_ext = 'json';
+        } else if (isset($this->parameters['html'])) {
+            $file_ext = 'html';
+        } else {
+            $file_ext = 'png';
+        }
+        return $file_ext;
+    }
+
+    public function get(string $custom_file_path = null)
+    {
+        $file_path = $custom_file_path ?? $this->build_file_path();
         $url = $this->getUrl();
         $ch = curl_init();
         $fp = fopen($file_path, 'wb');
         if ( !$fp ) {
-            throw new Exception('Cat does not fit here.');
-        }  
+            throw new Exception('Cat does not fit here (Cannot open file for writing).');
+        }
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_FILE, $fp);
         curl_setopt($ch, CURLOPT_HEADER, 0);
@@ -141,7 +137,7 @@ class Cataas
         curl_close($ch);
         fclose($fp);
         if (isset($error_msg)) {
-            throw new Exception('Cat not found : ' . $error_msg);
+            throw new Exception('Cat not found (Cannot load the file from cataas service): ' . $error_msg);
         }
     }
 
