@@ -1,7 +1,10 @@
 <?php
 
-require_once 'Cataas.php';
-require_once 'CataasApp.php';
+namespace App;
 
-$cataasApp = CataasApp::factory(Cataas::factory());
-$cataasApp->exec();
+use CataasApiPhp\CataasApiPhp;
+
+require __DIR__ . '/vendor/autoload.php';
+
+$app = CataasApp::factory(CataasApiPhp::factory());
+$app->exec();

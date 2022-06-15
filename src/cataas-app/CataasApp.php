@@ -1,12 +1,16 @@
 <?php
 
+namespace App;
+
+use CataasApiPhp\CataasApiPhp;
+
 /**
  * An example application which gets a cat from cataas.com
  * and applies a filter chosen by a day of the week
  */
 class CataasApp
 {
-    protected Cataas $cataas;
+    protected CataasApiPhp $cataas;
 
     protected string $filename = 'images' . DIRECTORY_SEPARATOR . 'examplecat.png';
 
@@ -20,12 +24,12 @@ class CataasApp
         'Saturday' => 'pixel',
     ];
 
-    public function __construct(Cataas $cataas)
+    public function __construct(CataasApiPhp $cataas)
     {
         $this->cataas = $cataas;
     }
 
-    public static function factory(Cataas $cataas)
+    public static function factory(CataasApiPhp $cataas)
     {
         return new static($cataas);
     }
@@ -40,7 +44,7 @@ class CataasApp
         return $time_passed > $seconds;
     }
 
-    protected function getFilter(DateTime $date): string
+    protected function getFilter(\DateTime $date): string
     {
         return $this->filterRules[$date->format("l")];
     }
@@ -50,7 +54,7 @@ class CataasApp
         return __DIR__ . DIRECTORY_SEPARATOR . $this->filename;
     }
 
-    public function exec(DateTime $date = new DateTime())
+    public function exec(\DateTime $date = new \DateTime())
     {
         try {
             // cataas.com service hangs up sometimes while getting too many requests
