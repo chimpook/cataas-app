@@ -23,6 +23,11 @@ class CataasApp
         $this->cataas = $cataas;
     }
 
+    public static function factory(Cataas $cataas)
+    {
+        return new static($cataas);
+    }
+
     protected function getFilter(DateTime $date): string
     {
         return $this->filterRules[$date->format("l")];

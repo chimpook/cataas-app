@@ -20,6 +20,11 @@ class Cataas
         $this->cataas_url = $cataas_url;
     }
 
+    public static function factory(string $cataas_url = self::DEFAULT_CATAAS_URL)
+    {
+        return new static($cataas_url);
+    }
+
     public function tag(string $tag): Cataas
     {
         $this->commands['tag'] = $tag;
