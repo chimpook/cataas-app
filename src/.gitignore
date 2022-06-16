@@ -1,5 +1,4 @@
 node_modules
-images
 vendor
 composer.lock
 .phpunit.result.cache
