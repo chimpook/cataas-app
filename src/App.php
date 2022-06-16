@@ -68,7 +68,7 @@ class App
     {
         try {
             // cataas.com service hangs up sometimes while getting too many requests
-            // so it is definitely a good idea to limit frequency of requests to one per minute
+            // so it is definitely a good idea to limit frequency of requests
             if ($this->isItTimeToRefresh()) {
                 if (!empty($this->getFilter($date))) {
                     $this->cataas->filter($this->getFilter($date));
@@ -76,7 +76,7 @@ class App
                 $this->cataas->get($this->getFilePath());
             }
             $this->output();
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             echo $e;
         }
     }
