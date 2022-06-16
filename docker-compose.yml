@@ -16,10 +16,9 @@ services:
     container_name: cataas-app
     volumes:
       - "./src:/var/www"
-    command: sh -c "composer install --ignore-platform-reqs && apache2-foreground"
+    command: sh -c "composer install --ignore-platform-reqs && chmod a+rwX images -R && chmod a+rwX tests/images -R && apache2-foreground"
     ports:
       - "8881:8881"
     networks:
       - cataas
     restart: unless-stopped
-
